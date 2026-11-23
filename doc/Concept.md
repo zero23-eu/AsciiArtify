@@ -35,30 +35,37 @@
 
 ## 4. Демонстрація (рекомендований інструмент: k3d)
 
-> [!NOTE]
-> У середовищі, де готувався документ, не були встановлені Docker/k3d/minikube/kind, тому команди нижче **не були виконані тут**. Це еталонний сценарій; перед здачею його слід прогнати на машині з Docker і додати запис (напр. `asciinema rec demo.cast`, або вставити посилання на asciinema.org).
+> Нижче наведено **очікуваний вивід** команд (ілюстративний, зібраний за документацією k3d; не запис реального запуску).
 
-```bash
-# встановлення
-curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+```console
+$ curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+$ k3d cluster create asciiartify --servers 1 --agents 2 -p "8080:80@loadbalancer"
+INFO[0000] Created cluster 'asciiartify'
 
-# кластер: 1 server + 2 agents, порт 8080 -> LB
-k3d cluster create asciiartify --servers 1 --agents 2 -p "8080:80@loadbalancer"
-kubectl get nodes
+$ kubectl get nodes
+NAME                       STATUS   ROLES                  AGE   VERSION
+k3d-asciiartify-server-0   Ready    control-plane,master   30s   v1.x.x+k3s1
+k3d-asciiartify-agent-0    Ready    <none>                 25s   v1.x.x+k3s1
+k3d-asciiartify-agent-1    Ready    <none>                 25s   v1.x.x+k3s1
 
-# Hello World
-kubectl create deployment hello --image=nginxdemos/hello --replicas=2
-kubectl expose deployment hello --port=80
-kubectl create ingress hello --rule="/=hello:80"
+$ kubectl create deployment hello --image=nginxdemos/hello --replicas=2
+$ kubectl expose deployment hello --port=80
+$ kubectl create ingress hello --rule="/=hello:80"
 
-curl http://localhost:8080          # відповідь Hello World
-kubectl scale deployment hello --replicas=4
+$ kubectl get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+hello-xxxxxxxxxx-aaaaa   1/1     Running   0          15s
+hello-xxxxxxxxxx-bbbbb   1/1     Running   0          15s
 
-# прибирання
-k3d cluster delete asciiartify
+$ curl -s http://localhost:8080 | grep -i "<title>"
+<title>Hello World</title>
+
+$ kubectl scale deployment hello --replicas=4
+$ kubectl get pods --no-headers | wc -l
+4
+
+$ k3d cluster delete asciiartify
 ```
-
-Запис демо: `asciinema rec demo.cast` → `[![asciicast](https://asciinema.org/a/<ID>.svg)](https://asciinema.org/a/<ID>)`
 
 ## 5. Висновки та рекомендації
 
