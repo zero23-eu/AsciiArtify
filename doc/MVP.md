@@ -64,3 +64,4 @@ argocd admin initial-password -n argocd
 Застосунок спочатку OutOfSync. Натиснути Sync, обрати ресурси і Synchronize. Дочекатися статусу Synced / Healthy.
 
 [ArgoCD-fork-demo-local.mp4](ArgoCD-fork-demo-local.mp4)
+[app-demo.mp4](app-demo.mp4)
