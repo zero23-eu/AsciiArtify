@@ -1,0 +1,10 @@
+#!/bin/bash
+
+NAMESPACE=${1:-kube-system}
+RESOURCE_TYPE=${2:-pods}
+
+echo "Resource, Namespace, Name, CPU, Memory"
+kubectl top "$RESOURCE_TYPE" -n "$NAMESPACE" --no-headers | while read -r NAME CPU MEMORY _
+do
+  echo "$RESOURCE_TYPE, $NAMESPACE, $NAME, $CPU, $MEMORY"
+done
